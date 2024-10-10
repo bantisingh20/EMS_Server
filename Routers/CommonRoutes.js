@@ -1,5 +1,7 @@
 const { SaveDepartment ,GetAllDepartments ,GetDepartmentByName ,GetDepartmentById,DeleteDepartment ,UpdateDepartment } = require('../Schemas/departmentSchema');
-const { SaveEmployee } = require('../Schemas/employeesSchema.js');
+
+const {SaveDesignation ,GetAllDesignation} =require('../Schemas/designationSchema.js');
+const { SaveEmployee,upload } = require('../Schemas/employeesSchema.js');
 const route = require('express').Router();
 const {verifyuser } = require('../middleware/authmiddleware.js');
 
@@ -15,9 +17,12 @@ route.delete('/department/deleteDepartmentByID/:id',DeleteDepartment);
 //#endregion
 
 
+route.post('/designation/save-designation',verifyuser,SaveDesignation)
+route.get('/designation/GetAlldesignation',verifyuser,GetAllDesignation);
+
 //#region Employee Routes
 
-route.post('/employee/save-employee',SaveEmployee)
+route.post('/employee/save-employee',verifyuser,upload.single('image'),SaveEmployee)
 //#endregion
 
 module.exports = route;
