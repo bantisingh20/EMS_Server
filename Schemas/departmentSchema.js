@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const DepartmentSchema = new mongoose.Schema({
-    departmentid: { type: Number, required: true,default:0 },
+    // departmentid: { type: Number, required: true,default:0 },
     departmentname: { type: String, required: true },
     recordstatus: { type: String, required: true, default: 'insert' },
     statusdate: { type: Date, default: Date.now },
@@ -10,13 +10,13 @@ const DepartmentSchema = new mongoose.Schema({
     isdeleted: { type: String, enum: ['n', 'y'], required: true, default: 'n' }
 });
 
-DepartmentSchema.plugin(AutoIncrement, { inc_field: 'departmentid' });
+// DepartmentSchema.plugin(AutoIncrement, { inc_field: 'departmentid' });
 const DepartmentTable = mongoose.model("Department", DepartmentSchema);
 
 // Insert department 
 const SaveDepartment = async (req, res) => {
     try {
-        const { departmentname,departmentid } = req.body;
+        const { departmentname } = req.body;
         console.log(req.body);
         const isExist = await DepartmentTable.findOne({ departmentname });
         if (isExist) {
@@ -53,7 +53,7 @@ const GetAllDepartments = async (req, res) => {
 // Function to search departments by name
 const GetDepartmentByName = async (req, res) => {
     try {
-        const { departmentName,departmentid } = req.query;  
+        const { departmentName } = req.query;  
    
         console.log(req.query)
         if (!departmentName) {
@@ -63,7 +63,7 @@ const GetDepartmentByName = async (req, res) => {
         const departments = await DepartmentTable.find({
             $and: [
                 { departmentname: { $regex: departmentName, $options: 'i' } }, // Case-insensitive search
-                { departmentid: departmentid }
+                // { departmentid: departmentid }
             ]
         });
         
