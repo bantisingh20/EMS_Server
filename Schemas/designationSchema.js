@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const DesignationSchema = new mongoose.Schema({
-    designationid: { type: Number, required: true,default:0 },
+    // designationid: { type: Number, required: true,default:0 },
     designationname: { type: String, required: true },
     recordstatus: { type: String, required: true, default: 'insert' },
     statusdate: { type: Date, default: Date.now },
@@ -10,7 +10,7 @@ const DesignationSchema = new mongoose.Schema({
     isdeleted: { type: String, enum: ['n', 'y'], required: true, default: 'n' }
 });
 
-DesignationSchema.plugin(AutoIncrement, { inc_field: 'designationid' });
+// DesignationSchema.plugin(AutoIncrement, { inc_field: 'designationid' });
 const DesignationTable = mongoose.model("Designation", DesignationSchema);
 
 // Insert department 
@@ -67,7 +67,7 @@ const DeleteDesignation = async(req,res) => {
 
 const UpdateDesignation = async(req,res) => {
     try { 
-        const {_id, departmentname} = req.body; 
+        const {_id, designationname} = req.body; 
         // console.log(req.body);
         const Designation = await DesignationTable.findByIdAndUpdate(
             { _id: _id },

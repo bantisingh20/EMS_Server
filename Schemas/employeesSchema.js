@@ -5,34 +5,28 @@ const bcrypt =require('bcrypt');
 const {UserTable} = require("../Schemas/user");
 
 const EmployeeSchema = new mongoose.Schema({
-employeeid : {type:Number ,required : true ,default:0 },
-employeecode : {type:String,required :true, default:'' },
-//isuser:{type:String,required:true},
+// employeeid : {type:Number ,required : true ,default:0 },
+employeecode : {type:String,required :true, default:'' }, 
 Userid :{type: mongoose.Schema.Types.ObjectId,ref:"User"},
 firstname : { type:String , required : true },
 lastname : { type : String , required :true},
 contactno : {type:Number},
-emailid: {type:String, required: true },
-//password:{ type:String},
+emailid: {type:String, required: true }, 
 dateofbith :{type:Date},
 dateofJoining : {type:Date,required:true},
-gender :{type:String},
-//maritialstatus :{type:String},
-department : { type: mongoose.Schema.Types.ObjectId,ref:"department" , required :true},
-designation : { type: String , required :true},
-//employeetype: {type:String},
+gender :{type:String}, 
+department : {type: mongoose.Schema.Types.ObjectId,ref:"Department"},
+designation : {type: mongoose.Schema.Types.ObjectId,ref:"Department"},
 address :{ type:String},
 activestatus:{type: String, enum: ['n', 'y'] ,default: 'y'},
 recordstatus: { type: String, required: true, default: 'insert' },
 statusdate: { type: Date, default: Date.now },
 disabled: { type: String, enum: ['n', 'y'], required: true, default: 'n' },
 isdeleted: { type: String, enum: ['n', 'y'], required: true, default: 'n' },
-
-
 })
 
 
-EmployeeSchema.plugin(AutoIncrement, { inc_field: 'employeeid' });
+// EmployeeSchema.plugin(AutoIncrement, { inc_field: 'employeeid' });
 const EmployeeTable = mongoose.model("Employee",EmployeeSchema)
 
 const storage = multer.diskStorage({
@@ -80,7 +74,7 @@ const SaveEmployee = async(req,res) => {
         console.log(newSavedUserid);
         const NewEmployee = EmployeeTable({
             employeecode,
-            Userid:newSavedUserid._id,
+            Userid:newSavedUserid._id =="" ? 0:newSavedUserid._id,
             employeecode
             ,firstname
             ,lastname
@@ -105,9 +99,19 @@ const SaveEmployee = async(req,res) => {
 
 const GetAllEmployees = async(req,res) => {
     try {
+         
+        const employee = await EmployeeTable.find().populate('department').populate("Userid");
+        console.log(employee) 
+
+        if(!employee.length){
+            return res.status(500).json({success:true, message:"Employee not Exist"})
+        }
+
+        res.status(200).json({success:true, message:"Employee retrieving successfully" , data:employee})
         
     } catch (error) {
-        console.log(error);
+        console.error('Error retrieving Employee:', error);
+        res.status(500).json({ success: false, message: "Error retrieving Employee", error: error.message });
     }
 }
-module.exports = {EmployeeTable ,SaveEmployee,upload}
+module.exports = {EmployeeTable ,SaveEmployee,upload ,GetAllEmployees}
